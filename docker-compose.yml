@@ -1,0 +1,19 @@
+version: '3'
+services:
+  minio:
+    image: minio/minio
+    container_name: minio
+    volumes:
+      - /Workspace/minio:/data
+    ports:
+      - 9000:9000
+    environment:
+      MINIO_ACCESS_KEY: my_access
+      MINIO_SECRET_KEY: my_secret
+    command: server /data
+
+  minio-bucket:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: /bin/sh -c "/usr/bin/mc config host add myminio http://minio:9000 my_access my_secret && /usr/bin/mc mb myminio/image && exit 0;"
